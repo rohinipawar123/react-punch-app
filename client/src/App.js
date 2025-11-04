@@ -1,46 +1,32 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 function App() {
   const [punches, setPunches] = useState([]);
-  const [manualTime, setManualTime] = useState("");
+  const [manualTime, setManualTime] = useState('');
 
-  // ✅ Automatically detect backend URL
-  const backendURL =
-    process.env.REACT_APP_BACKEND_URL || window.location.origin;
+  const backendURL = process.env.REACT_APP_BACKEND_URL || window.location.origin;
 
-  // ✅ Fetch punch data
   const fetchPunches = async () => {
     try {
       const res = await axios.get(`${backendURL}/api/punches`);
-      if (Array.isArray(res.data)) {
-        setPunches(res.data);
-      } else {
-        setPunches([]);
-      }
+      setPunches(res.data);
     } catch (err) {
-      console.error("❌ Error fetching punches:", err);
+      console.error('Error fetching punches:', err);
     }
   };
 
-  // ✅ Handle punch-in button click
   const punchIn = async () => {
     const now = new Date();
     const localTime = now.toLocaleString();
     const timeToSave = manualTime || localTime;
 
     try {
-      const res = await axios.post(`${backendURL}/api/punch`, {
-        name: "User",
-        time: timeToSave,
-      });
-
-      console.log("✅ Punch response:", res.data);
-      setManualTime("");
-      fetchPunches(); // Refresh list after punching
+      await axios.post(`${backendURL}/api/punch`, { time: timeToSave });
+      setManualTime('');
+      fetchPunches();
     } catch (err) {
-      console.error("❌ Error punching in:", err);
-      alert("Punch-in failed. Check console for details.");
+      console.error('Error punching in:', err);
     }
   };
 
@@ -49,11 +35,36 @@ function App() {
   }, []);
 
   return (
-    <div
-      className="container"
-      style={{
-        maxWidth: "500px",
-        margin: "60px auto",
-        padding: "30px",
-        background: "#fff",
-        borderRadius: "1
+    <div className="container">
+      <h2>⏰ Punch In App</h2>
+
+      <p>
+        <strong>Local Time:</strong> {new Date().toLocaleString()}
+      </p>
+
+      <input
+        type="text"
+        placeholder="Enter time manually (optional)"
+        value={manualTime}
+        onChange={(e) => setManualTime(e.target.value)}
+      />
+
+      <div>
+        <button onClick={punchIn}>Punch In</button>
+      </div>
+
+      <h3>Recent Punches</h3>
+      <ul style={{ textAlign: 'left' }}>
+        {Array.isArray(punches) && punches.length > 0 ? (
+          punches.map((item, index) => (
+            <li key={index}>{item.time}</li>
+          ))
+        ) : (
+          <p>No punch records available</p>
+        )}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
