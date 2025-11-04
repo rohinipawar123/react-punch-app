@@ -4,9 +4,8 @@ import axios from 'axios';
 function App() {
   const [punches, setPunches] = useState([]);
   const [manualTime, setManualTime] = useState('');
-  const [punchData, setPunchData] = React.useState([]);
-
-
+  const [punchData, setPunchData] = useState([]);
+  
   const backendURL = process.env.REACT_APP_BACKEND_URL || window.location.origin;
 
   const fetchPunches = async () => {
