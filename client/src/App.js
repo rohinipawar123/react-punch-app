@@ -51,7 +51,7 @@ function App() {
     <div className="app-container">
       <h1>⏰ Punch Clock</h1>
       <p className="greeting">
-        {getGreeting()}, Swapnali 🌞
+        {getGreeting()}, Rohini 🌞
       </p>
 
       <div className="card">
@@ -85,7 +85,8 @@ function App() {
         {punches.length > 0 ? (
           punches.map((p, i) => (
             <p key={i}>
-              <strong>{p.time}</strong> — {p.type} ({p.note || "-"})
+              <strong>{p.time}</strong> — {p.type}
+              {p.note ? ` (${p.note})` : ""}
             </p>
           ))
         ) : (
@@ -93,7 +94,7 @@ function App() {
         )}
       </div>
 
-      <footer>© 2025 PunchApp | Made with 💙 by Swapnali</footer>
+      <footer>© 2025 PunchApp | Made with 💙 by Rohini</footer>
     </div>
   );
 }
