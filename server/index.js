@@ -73,6 +73,31 @@ const connectToCouchbase = async () => {
         res.status(500).json({ error: "Internal Server Error" });
       }
     });
+    
+ // --- ✅ punchin entry ---
+    
+    app.post("/api/punch", async (req, res) => {
+  try {
+    const { time, isManual } = req.body;
+    if (!time) {
+      return res.status(400).json({ error: "Time is required" });
+    }
+
+    const punchEntry = {
+      id: Date.now(),
+      time,
+      type: isManual ? "manual" : "local",
+    };
+
+    punches.unshift(punchEntry);
+    console.log("✅ Punch recorded:", punchEntry);
+    res.status(200).json(punchEntry);
+  } catch (err) {
+    console.error("Error saving punch:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 
     // --- ✅ Serve React Frontend ---
     app.use(express.static(path.join(__dirname, "../client/build")));
