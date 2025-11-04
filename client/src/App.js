@@ -53,9 +53,14 @@ function App() {
 
       <h3>Recent Punches</h3>
       <ul style={{ textAlign: 'left' }}>
-        {punches.map((p, i) => (
-          <li key={i}>{p.time}</li>
-        ))}
+        {Array.isArray(punchData) && punchData.length > 0 ? (
+  punchData.map((item) => (
+    <div key={item.id}>{item.time}</div>
+  ))
+) : (
+  <p>No punch records available</p>
+)}
+
       </ul>
     </div>
   );
