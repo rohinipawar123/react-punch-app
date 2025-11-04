@@ -9,13 +9,16 @@ import cors from "cors";
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// ✅ Required for __dirname in ES Modules
+// ✅ Needed for __dirname in ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // ✅ Middleware
 app.use(express.json());
 app.use(cors());
+
+// ✅ Temporary in-memory array to store punches (for testing)
+let punches = [];
 
 // ✅ Couchbase Connection
 const connectToCouchbase = async () => {
@@ -35,8 +38,8 @@ const connectToCouchbase = async () => {
     // --- ✅ Fetch Punches ---
     app.get("/api/punches", async (req, res) => {
       try {
-        // You can later query Couchbase here if needed
-        res.json([]); // Placeholder response
+        // Return in-memory punches (or Couchbase query later)
+        res.json(punches);
       } catch (error) {
         console.error("Error fetching punches:", error);
         res.status(500).json({ error: "Error fetching punches" });
@@ -46,13 +49,25 @@ const connectToCouchbase = async () => {
     // --- ✅ Save Punch (Punch-in) ---
     app.post("/api/punch", async (req, res) => {
       try {
-        const { name, time } = req.body;
-        console.log("Received Punch:", name, time);
+        const { time } = req.body;
+        if (!time) {
+          return res.status(400).json({ error: "Time is required" });
+        }
 
-        // Optional: Save to Couchbase
-        // await collection.insert(`punch_${Date.now()}`, { name, time });
+        const punchEntry = {
+          id: Date.now(),
+          time,
+        };
 
-        res.status(200).json({ message: "Punch-in recorded successfully!" });
+        // Add to in-memory array
+        punches.unshift(punchEntry);
+
+        // Optionally: Save to Couchbase
+        // await collection.insert(`punch_${Date.now()}`, punchEntry);
+
+        console.log("✅ Punch recorded:", punchEntry);
+
+        res.status(200).json(punchEntry);
       } catch (err) {
         console.error("Error saving punch:", err);
         res.status(500).json({ error: "Internal Server Error" });
