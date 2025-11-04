@@ -20,6 +20,7 @@ function App() {
   const handlePunch = async (type) => {
     const now = new Date();
     const formattedTime = time || now.toLocaleString();
+
     const newPunch = {
       time: formattedTime,
       type,
@@ -47,12 +48,13 @@ function App() {
     return "Good Evening";
   };
 
+  const punchInRecords = punches.filter((p) => p.type === "Punch In");
+  const punchOutRecords = punches.filter((p) => p.type === "Punch Out");
+
   return (
     <div className="app-container">
       <h1>⏰ Punch Clock</h1>
-      <p className="greeting">
-        {getGreeting()}, Rohini 🌞
-      </p>
+      <p className="greeting">{getGreeting()}, Rohini 🌸</p>
 
       <div className="card">
         <label>Time:</label>
@@ -81,16 +83,28 @@ function App() {
       </div>
 
       <div className="past-punches">
-        <h3>📜 Past Punches</h3>
-        {punches.length > 0 ? (
-          punches.map((p, i) => (
+        <h3>📥 Past Punch In Records</h3>
+        {punchInRecords.length > 0 ? (
+          punchInRecords.map((p, i) => (
             <p key={i}>
-              <strong>{p.time}</strong> — {p.type}
+              <strong>{p.time}</strong> — Punch In successfully
               {p.note ? ` (${p.note})` : ""}
             </p>
           ))
         ) : (
-          <p>No records yet.</p>
+          <p>No Punch In records yet.</p>
+        )}
+
+        <h3>📤 Past Punch Out Records</h3>
+        {punchOutRecords.length > 0 ? (
+          punchOutRecords.map((p, i) => (
+            <p key={i}>
+              <strong>{p.time}</strong> — Punch Out successfully
+              {p.note ? ` (${p.note})` : ""}
+            </p>
+          ))
+        ) : (
+          <p>No Punch Out records yet.</p>
         )}
       </div>
 
