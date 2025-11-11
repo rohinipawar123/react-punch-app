@@ -1,0 +1,17 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 834323808856.dkr.ecr.ap-south-1.amazonaws.com
+  build:
+    commands:
+      - echo Building the Docker image...
+      - docker build -t punchin .
+      - docker tag punchin:latest 834323808856.dkr.ecr.ap-south-1.amazonaws.com/punchin:latest
+  post_build:
+    commands:
+      - echo Pushing the Docker image to ECR...
+      - docker push 834323808856.dkr.ecr.ap-south-1.amazonaws.com/punchin:latest
+      - echo Build completed successfully
